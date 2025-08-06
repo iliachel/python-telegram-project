@@ -10,6 +10,7 @@
       <a href="{{ url_for('index') }}">Home</a>
       {% if current_user.is_authenticated %}
         <a href="{{ url_for('admin') }}">Admin</a>
+        <a href="{{ url_for('two_factor_setup') }}">Setup 2FA</a>
         <a href="{{ url_for('logout') }}">Logout</a>
       {% else %}
         <a href="{{ url_for('login') }}">Login</a>
