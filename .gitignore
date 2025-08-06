@@ -1,0 +1,15 @@
+# Database
+instance/
+
+# Logs
+server.log
+
+# Cookies
+cookies.txt
+
+# Python
+*.pyc
+__pycache__/
+
+# Environment variables
+.env
