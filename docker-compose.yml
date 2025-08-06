@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "5001:5001"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/users
+    depends_on:
+      - db
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "5002:5002"
+    environment:
+      - USER_SERVICE_URL=http://user-service:5001
+
+  2fa-service:
+    build: ./2fa-service
+    ports:
+      - "5003:5003"
+    environment:
+      - USER_SERVICE_URL=http://user-service:5001
+      - MAIL_SERVER=smtp.example.com
+      - MAIL_PORT=587
+      - MAIL_USE_TLS=True
+      - MAIL_USERNAME=your-email@example.com
+      - MAIL_PASSWORD=your-password
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - USER_SERVICE_URL=http://user-service:5001
+      - AUTH_SERVICE_URL=http://auth-service:5002
+      - TFA_SERVICE_URL=http://2fa-service:5003
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=users
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
