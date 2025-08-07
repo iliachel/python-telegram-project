@@ -1,4 +1,5 @@
 Flask
-Flask-Login
-requests
 PyJWT
+requests
+werkzeug
+python-dotenv

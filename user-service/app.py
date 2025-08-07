@@ -13,6 +13,8 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     otp_secret = db.Column(db.String(16))
 
+from werkzeug.security import generate_password_hash
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -47,8 +49,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True, port=5001)
-
-def generate_password_hash(password, method):
-    # This is a placeholder for the actual password hashing logic
-    # In a real application, you would use a library like Werkzeug to hash the password
-    return password

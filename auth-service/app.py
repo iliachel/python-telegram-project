@@ -27,10 +27,7 @@ def login():
 
     return jsonify({'message': 'Could not verify'}), 401
 
-def check_password_hash(hashed_password, password):
-    # This is a placeholder for the actual password hashing logic
-    # In a real application, you would use a library like Werkzeug to check the password
-    return hashed_password == password
+from werkzeug.security import check_password_hash
 
 if __name__ == '__main__':
     app.run(debug=True, port=5002)
