@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Telegram Admin{% endblock %}
+
+{% block content %}
+<h1>Telegram Admin</h1>
+
+<h2>Chat History</h2>
+<div id="chat-history">
+  {% for message in messages %}
+    <p><b>{{ message.username }}</b>: {{ message.text }}</p>
+  {% endfor %}
+</div>
+
+<h2>Send Message to User</h2>
+<form id="send-to-user-form">
+  <label for="user-id">User ID:</label>
+  <input type="text" id="user-id" name="user_id" required>
+  <label for="message-text">Message:</label>
+  <input type="text" id="message-text" name="message_text" required>
+  <button type="submit">Send</button>
+</form>
+
+<h2>Send Message to Everyone</h2>
+<form id="send-to-everyone-form">
+  <label for="broadcast-message-text">Message:</label>
+  <input type="text" id="broadcast-message-text" name="message_text" required>
+  <button type="submit">Send to Everyone</button>
+</form>
+
+<script>
+  document.getElementById('send-to-user-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const userId = document.getElementById('user-id').value;
+    const messageText = document.getElementById('message-text').value;
+    const response = await fetch('/telegram/send_message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_id: userId, text: messageText }),
+    });
+    const result = await response.json();
+    alert(result.status);
+  });
+
+  document.getElementById('send-to-everyone-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const messageText = document.getElementById('broadcast-message-text').value;
+    // In a real application, you would get the list of all users from the database
+    const users = [123456789]; // Replace with actual user IDs
+    for (const userId of users) {
+      const response = await fetch('/telegram/send_message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: userId, text: messageText }),
+      });
+      const result = await response.json();
+      console.log(`Message sent to ${userId}: ${result.status}`);
+    }
+    alert('Messages sent to everyone!');
+  });
+
+  async function getChatHistory() {
+    const response = await fetch('/telegram/chat_history');
+    const messages = await response.json();
+    const chatHistory = document.getElementById('chat-history');
+    chatHistory.innerHTML = '';
+    for (const message of messages) {
+      const p = document.createElement('p');
+      p.innerHTML = `<b>${message.username}</b>: ${message.text}`;
+      chatHistory.appendChild(p);
+    }
+  }
+
+  setInterval(getChatHistory, 5000);
+  getChatHistory();
+</script>
+{% endblock %}

@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+flask_login
+werkzeug
+flask_mail
+pyotp
+python-dotenv
+requests

@@ -100,6 +100,26 @@ def logout():
 def admin():
     return render_template('admin.html')
 
+import requests
+
+@app.route('/telegram_admin')
+@login_required
+def telegram_admin():
+    return render_template('telegram_admin.html')
+
+@app.route('/telegram/send_message', methods=['POST'])
+@login_required
+def telegram_send_message():
+    data = request.get_json()
+    response = requests.post('http://telegram-service:8002/send_message', json=data)
+    return response.json()
+
+@app.route('/telegram/chat_history')
+@login_required
+def telegram_chat_history():
+    response = requests.get('http://telegram-service:8002/chat_history')
+    return response.json()
+
 @app.route('/2fa_setup', methods=['GET', 'POST'])
 @login_required
 def two_factor_setup():

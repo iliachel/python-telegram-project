@@ -37,6 +37,19 @@ services:
       - USER_SERVICE_URL=http://user-service:5001
       - AUTH_SERVICE_URL=http://auth-service:5002
       - TFA_SERVICE_URL=http://2fa-service:5003
+      - FASTAPI_SERVICE_URL=http://fastapi-service:8001
+
+  fastapi-service:
+    build: ./fastapi-service
+    ports:
+      - "8001:8001"
+
+  telegram-service:
+    build: ./telegram-service
+    ports:
+      - "8002:8002"
+    env_file:
+      - .env
 
   db:
     image: postgres:13
