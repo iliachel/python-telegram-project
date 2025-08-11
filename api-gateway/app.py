@@ -38,6 +38,8 @@ def generate_2fa():
     response = requests.post(f'{TFA_SERVICE_URL}/generate', json={'username': current_user})
     return response.content, response.status_code
 
+MONOLITH_SERVICE_URL = os.environ.get('MONOLITH_SERVICE_URL')
+
 @app.route('/2fa/verify', methods=['POST'])
 def verify_2fa():
     current_user = get_current_user()
@@ -45,6 +47,12 @@ def verify_2fa():
         return jsonify({'message': 'Not authorized'}), 401
 
     response = requests.post(f'{TFA_SERVICE_URL}/verify', json={'username': current_user, 'otp': request.get_json()['otp']})
+    return response.content, response.status_code
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    response = requests.get(f'{MONOLITH_SERVICE_URL}/{path}')
     return response.content, response.status_code
 
 if __name__ == '__main__':

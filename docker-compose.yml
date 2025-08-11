@@ -36,6 +36,16 @@ services:
       - AUTH_SERVICE_URL=http://auth-service:5002
       - TFA_SERVICE_URL=http://2fa-service:5003
       - FASTAPI_SERVICE_URL=http://fastapi-service:8001
+      - MONOLITH_SERVICE_URL=http://monolith:5005
+    depends_on:
+      - monolith
+
+  monolith:
+    build: ./monolith
+    ports:
+      - "5005:5005"
+    env_file:
+      - .env
 
   fastapi-service:
     build: ./fastapi-service
