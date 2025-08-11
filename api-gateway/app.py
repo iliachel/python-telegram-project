@@ -21,12 +21,22 @@ def get_current_user():
 
 @app.route('/register', methods=['POST'])
 def register():
-    response = requests.post(f'{USER_SERVICE_URL}/register', json=request.get_json())
+    # The browser sends form data, not JSON.
+    # We read from request.form and convert it to JSON for the user-service.
+    form_data = request.form.to_dict()
+    response = requests.post(f'{USER_SERVICE_URL}/register', json=form_data)
     return response.content, response.status_code
 
 @app.route('/login', methods=['POST'])
 def login():
-    response = requests.post(f'{AUTH_SERVICE_URL}/login', auth=request.authorization)
+    # The browser sends form data. The auth-service expects HTTP Basic Auth.
+    # We extract the form data and pass it as the 'auth' tuple to requests.
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if not username or not password:
+        return jsonify({'message': 'Username and password are required'}), 400
+
+    response = requests.post(f'{AUTH_SERVICE_URL}/login', auth=(username, password))
     return response.content, response.status_code
 
 @app.route('/2fa/generate', methods=['POST'])
