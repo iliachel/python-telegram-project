@@ -1,3 +1,4 @@
 Flask
 pyotp
 Flask-Mail
+requests
