@@ -9,7 +9,7 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.Text, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     otp_secret = db.Column(db.String(16))
 
