@@ -37,16 +37,24 @@ services:
       - AUTH_SERVICE_URL=http://auth-service:5002
       - TFA_SERVICE_URL=http://2fa-service:5003
       - FASTAPI_SERVICE_URL=http://fastapi-service:8001
-      - MONOLITH_SERVICE_URL=http://monolith:5005
+      - TELEGRAM_SERVICE_URL=http://telegram-service:8002
     depends_on:
-      - monolith
+      - user-service
+      - auth-service
+      - 2fa-service
+      - fastapi-service
+      - telegram-service
 
-  monolith:
-    build: ./monolith
+  frontend-service:
+    build: ./frontend-service
     ports:
-      - "5005:5005"
-    env_file:
-      - .env
+      - "3000:3000"
+    volumes:
+      - ./frontend-service/src:/app/src
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - api-gateway
 
   fastapi-service:
     build: ./fastapi-service
