@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from telegram_bot import bot
 from pydantic import BaseModel
 
+# Import database functions
+import database
+
 app = FastAPI()
 
 class Message(BaseModel):
@@ -15,8 +18,8 @@ async def send_message(message: Message):
 
 @app.get("/chat_history")
 async def get_chat_history():
-    # In a real application, you would fetch the chat history from a database
-    return [
-        {'username': 'user1', 'text': 'Hello!'},
-        {'username': 'user2', 'text': 'Hi there!'},
-    ]
+    return database.get_chat_history()
+
+@app.get("/users")
+async def get_users():
+    return database.get_all_users()

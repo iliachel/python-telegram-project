@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -118,6 +118,33 @@ def telegram_send_message():
 def telegram_chat_history():
     response = requests.get('http://telegram-service:8002/chat_history')
     return response.json()
+
+
+@app.route('/telegram/broadcast', methods=['POST'])
+@login_required
+def telegram_broadcast():
+    data = request.get_json()
+    message_text = data.get('text')
+    if not message_text:
+        return jsonify({'status': 'error', 'message': 'Message text is required'}), 400
+
+    # Get all users from the telegram-service
+    try:
+        response = requests.get('http://telegram-service:8002/users')
+        response.raise_for_status()  # Raise an exception for bad status codes
+        user_ids = response.json()
+    except requests.exceptions.RequestException as e:
+        return jsonify({'status': 'error', 'message': f'Could not get users from telegram-service: {e}'}), 500
+
+    # Send message to each user
+    for user_id in user_ids:
+        try:
+            requests.post('http://telegram-service:8002/send_message', json={'user_id': user_id, 'text': message_text})
+        except requests.exceptions.RequestException as e:
+            # Log the error and continue
+            print(f"Failed to send message to user {user_id}: {e}")
+
+    return jsonify({'status': 'success'})
 
 @app.route('/2fa_setup', methods=['GET', 'POST'])
 @login_required

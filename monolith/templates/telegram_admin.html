@@ -47,20 +47,19 @@
   document.getElementById('send-to-everyone-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     const messageText = document.getElementById('broadcast-message-text').value;
-    // In a real application, you would get the list of all users from the database
-    const users = [123456789]; // Replace with actual user IDs
-    for (const userId of users) {
-      const response = await fetch('/telegram/send_message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: userId, text: messageText }),
-      });
-      const result = await response.json();
-      console.log(`Message sent to ${userId}: ${result.status}`);
+    const response = await fetch('/telegram/broadcast', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text: messageText }),
+    });
+    const result = await response.json();
+    if (result.status === 'success') {
+      alert('Broadcast message sent successfully!');
+    } else {
+      alert(`Error sending broadcast message: ${result.message}`);
     }
-    alert('Messages sent to everyone!');
   });
 
   async function getChatHistory() {
