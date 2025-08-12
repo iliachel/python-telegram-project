@@ -10,7 +10,7 @@ AUTH_SERVICE_URL = os.environ.get('AUTH_SERVICE_URL')
 TFA_SERVICE_URL = os.environ.get('TFA_SERVICE_URL')
 
 def get_current_user():
-    token = request.headers.get('Authorization')
+    token = request.cookies.get('token')
     if not token:
         return None
     try:
@@ -78,6 +78,15 @@ def verify_2fa():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+    public_paths = ['login', 'register', 'static', 'favicon.ico']
+    if any(path.startswith(p) for p in public_paths) or path == '':
+        response = requests.get(f'{MONOLITH_SERVICE_URL}/{path}')
+        return response.content, response.status_code
+
+    user = get_current_user()
+    if not user:
+        return redirect(url_for('catch_all', path='login'))
+
     response = requests.get(f'{MONOLITH_SERVICE_URL}/{path}')
     return response.content, response.status_code
 
