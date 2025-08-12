@@ -96,7 +96,6 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/admin')
-@login_required
 def admin():
     return render_template('admin.html')
 
