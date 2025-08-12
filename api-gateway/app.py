@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for, make_response
 import requests
 import os
 import jwt
@@ -44,6 +44,15 @@ def login():
         return jsonify({'message': 'Username and password are required'}), 400
 
     response = requests.post(f'{AUTH_SERVICE_URL}/login', auth=(username, password))
+
+    if response.status_code == 200:
+        token = response.json().get('token')
+        # Redirect to the admin page, setting the token in an HttpOnly cookie
+        resp = make_response(redirect(url_for('catch_all', path='admin')))
+        resp.set_cookie('token', token, httponly=True, samesite='Lax')
+        return resp
+
+    # If there was an error, return the error message from the auth-service
     return response.content, response.status_code
 
 @app.route('/2fa/generate', methods=['POST'])
