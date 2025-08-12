@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for
 import requests
 import os
 import jwt
@@ -25,6 +25,13 @@ def register():
     # We read from request.form and convert it to JSON for the user-service.
     form_data = request.form.to_dict()
     response = requests.post(f'{USER_SERVICE_URL}/register', json=form_data)
+
+    if response.status_code == 200:
+        # In a real app, we might add a flash message here.
+        # For now, just redirect to the login page.
+        return redirect(url_for('catch_all', path='login'))
+
+    # If there was an error, return the error message from the user-service
     return response.content, response.status_code
 
 @app.route('/login', methods=['POST'])
