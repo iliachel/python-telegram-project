@@ -1,0 +1,56 @@
+How This Application Works: A Step-by-Step Guide
+
+This document explains the journey of a user through the application, from visiting the website to using its features. We'll use a simple analogy: think of the application like a modern restaurant.
+
+================================
+Part 1: The Restaurant Analogy
+================================
+
+*   The Frontend (The Dining Room): This is the website you see and interact with in your browser (http://localhost:3000). It's where you "sit down" and "place your order" by clicking buttons and filling out forms.
+
+*   The Backend (The Kitchen): This is the part of the system you don't see, where all the work happens. We've organized our kitchen into specialized stations, which we call "microservices".
+
+*   The API Gateway (The Head Waiter): When you do something on the website, your request goes to the API Gateway. Like a head waiter, it takes your order, makes sure you're a valid customer (logged in), and directs your request to the correct station in the kitchen.
+
+*   The Microservices (The Kitchen Stations): Each station is a specialist:
+    *   Auth Service (The Host/Maître d'): Checks your username and password.
+    *   User Service (The Staff Manager): Keeps a record of all registered customers.
+    *   Telegram Service (The Delivery Counter): Handles everything related to Telegram.
+
+================================
+Part 2: A User's Journey
+================================
+
+Here's what happens when you use the app:
+
+Step 1: Visiting the Website
+
+You open your browser and go to http://localhost:3000. Your browser connects to the "Dining Room" (the Frontend Service). You see the home page with links to Login and Register.
+
+Step 2: Registration
+
+1.  You click "Register".
+2.  You fill out the registration form in the "Dining Room".
+3.  When you click "Submit", your registration details are handed to the "Head Waiter" (the API Gateway).
+4.  The Head Waiter sends your details to the "Staff Manager" (the User Service), which creates a new user account for you.
+5.  You are then taken to the login page.
+
+Step 3: Logging In
+
+1.  You click "Login" and fill out the form.
+2.  This request goes to the "Head Waiter" (API Gateway).
+3.  The Head Waiter asks the "Host" (Auth Service) to check your credentials.
+4.  If they are correct, the Host gives the Head Waiter a special "access token" (like a table buzzer that proves you're a seated customer).
+5.  The Head Waiter gives this token to your browser, which stores it securely. You are now logged in and taken to the admin panel.
+
+Step 4: Using the Admin Panel (e.g., Sending a Broadcast)
+
+1.  Now that you're logged in, your browser shows your access token with every request.
+2.  You go to the Admin Panel and type a broadcast message in a form (in the "Dining Room").
+3.  You click "Send to Everyone". The request goes to the "Head Waiter" (API Gateway).
+4.  The Head Waiter checks your token to confirm you're an authorized admin.
+5.  It then passes the broadcast request to the "Delivery Counter" (the Telegram Service).
+6.  The Telegram Service gets the message and sends it to every user who has ever started the bot.
+7.  A success message is sent back through the chain to you in the "Dining Room".
+
+This separation of duties makes the application efficient, scalable, and easier to maintain—just like a well-organized restaurant!
